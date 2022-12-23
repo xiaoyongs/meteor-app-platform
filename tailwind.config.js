@@ -1,7 +1,11 @@
 const colors = require("tailwindcss/colors");
 
 module.exports = {
-  purge: ["./imports/ui/**/*.{js,jsx,ts,tsx}", "./public/*.html"],
+  purge: [
+    "./imports/ui/**/*.{js,jsx,ts,tsx}",
+    "./client/*.html",
+    "./imports/pages/**/*.{js,jsx,ts,tsx}",
+  ],
   darkMode: false, // or 'media' or 'class'
   theme: {
     fontFamily: {
@@ -30,5 +34,15 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [require("daisyui")],
+  plugins: [require("@tailwindcss/typography"), require("daisyui")],
+  daisyui: {
+    styled: true,
+    themes: true,
+    base: true,
+    utils: true,
+    logs: true,
+    rtl: false,
+    prefix: "",
+    darkTheme: "dark",
+  },
 };

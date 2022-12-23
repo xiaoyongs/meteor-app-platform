@@ -1,8 +1,11 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
+import { useTracker } from "meteor/react-meteor-data";
 import { useNavigate } from "react-router-dom";
 import { menuEvent } from "/imports/utils/menuEvent";
-const Header = () => {
+
+const Header = ({ showManage }) => {
+  const user = useTracker(() => Meteor.user());
   const navigate = useNavigate();
   const handleToggleMenu = () => {
     menuEvent.emit("toggle-menu");
@@ -87,12 +90,14 @@ const Header = () => {
               <img src="https://placeimg.com/80/80/people" />
             </div>
           </label>
+
           <ul
             tabIndex={0}
             className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-200 rounded-box w-52"
           >
+            <span className="text-right	px-2">{user?.username}</span>
             <li>
-              <a className="justify-between">Profile</a>
+              <a>Profile</a>
             </li>
             <li>
               <a>Settings</a>
