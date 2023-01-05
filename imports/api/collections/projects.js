@@ -3,29 +3,59 @@ import SimpleSchema from "simpl-schema";
 
 const ProjectVersionSchema = new SimpleSchema({
   version: String,
-  platform: Array,
-  platform: { type: Array },
-  "platform.$": { type: String },
+  platform: String,
   project_name: String,
-  splash: Object,
-  logo: Object,
   app_name: String,
   signature: Object,
   license: Object,
+  url: String,
+  download_times: Number,
+  size: String,
+  QRcode: String,
+  createdAt: String,
 });
 
 export const VersionsCollection = new Mongo.Collection("versions");
 VersionsCollection.attachSchema(ProjectVersionSchema);
 
-const ProjectsSchema = new SimpleSchema({
-  project_name: { type: String, index: true, unique: true },
-  app_name: String,
-  managers: { type: Array },
-  "managers.$": { type: Object },
-  "managers.$._id": { type: String },
-  "managers.$.username": { type: String },
-  createdAt: String,
-});
+const imageSchema = new SimpleSchema(
+  {
+    _id: String,
+    path: String,
+  },
+  { requiredByDefault: false }
+);
+
+const ProjectsSchema = new SimpleSchema(
+  {
+    project_name: { type: String, index: true, unique: true, required: true },
+    app_name: String,
+    managers: { type: Array },
+    "managers.$": { type: Object },
+    "managers.$._id": { type: String },
+    "managers.$.username": { type: String },
+    members: { type: Array },
+    "members.$": { type: Object },
+    "members.$._id": { type: String },
+    "members.$.username": { type: String },
+    splash: { type: imageSchema },
+    icon: { type: imageSchema },
+    boundleId: String,
+    createdAt: String,
+  },
+  { requiredByDefault: false }
+);
 
 export const ProjectsCollection = new Mongo.Collection("projects");
 ProjectsCollection.attachSchema(ProjectsSchema);
+
+const TasksSchema = new SimpleSchema({
+  platform: String,
+  project_id: String,
+  project_name: String,
+  createdAt: String,
+  config: SimpleSchema.Any,
+  status: String,
+});
+export const TasksCollections = new Mongo.Collection("tasks");
+TasksCollections.attachSchema(TasksSchema);

@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { isEmpty, debounce } from "lodash";
-import { Meteor } from "meteor/meteor";
+import { useTracker } from "meteor/react-meteor-data";
 
+import { Meteor } from "meteor/meteor";
+import { Roles } from "meteor/alanning:roles";
 const DrawerContent = ({ handleCloseDrawer, users }) => {
+  const user = useTracker(() => Meteor.user());
+
   const usernameRef = useRef();
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("default");
@@ -83,7 +87,9 @@ const DrawerContent = ({ handleCloseDrawer, users }) => {
               <option value="default" disabled>
                 Please choose a role
               </option>
-              <option value="manager">manager</option>
+              {Roles.userIsInRole(user?._id, ["admin"]) && (
+                <option value="manager">manager</option>
+              )}
               <option value="developer">developer</option>
             </select>
           </li>

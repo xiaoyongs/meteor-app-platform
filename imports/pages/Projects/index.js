@@ -3,7 +3,11 @@ import ProjectsTable from "./ProjectsTable";
 import { useTracker } from "meteor/react-meteor-data";
 import DrawerContent from "./DrawerContent";
 import { ProjectsCollection } from "../../api/collections/projects";
+import { Meteor } from "meteor/meteor";
+import { Roles } from "meteor/alanning:roles";
+
 const index = () => {
+  const user = useTracker(() => Meteor.user());
   const drawerCheckRef = useRef();
   const handleCloseDrawer = () => {
     drawerCheckRef.current.checked = false;
@@ -19,16 +23,18 @@ const index = () => {
       />
       <div className="drawer-content flex flex-col">
         <div>
-          <label
-            htmlFor="create-project-drawer"
-            className="drawer-button btn btn-primary float-right	"
-          >
-            New Project
-          </label>
+          {Roles.userIsInRole(user?._id, ["admin", "manager"]) && (
+            <label
+              htmlFor="create-project-drawer"
+              className="drawer-button btn btn-primary float-right	"
+            >
+              New Project
+            </label>
+          )}
         </div>
-        <ProjectsTable projectsList={projectsList} />
+        <ProjectsTable user={user} projectsList={projectsList} />
       </div>
-      <DrawerContent handleCloseDrawer={handleCloseDrawer} />
+      <DrawerContent user={user} handleCloseDrawer={handleCloseDrawer} />
     </div>
   );
 };

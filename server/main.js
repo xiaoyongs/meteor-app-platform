@@ -3,9 +3,34 @@ import { Accounts } from "meteor/accounts-base";
 import { Roles } from "meteor/alanning:roles";
 import "/imports/api/users.js";
 import "/imports/api/projects.js";
-
+import "/imports/api/file.js";
 const SEED_USERNAME = "admin";
 const SEED_PASSWORD = "admin123123";
+import { isEmpty } from "lodash";
+import { TasksCollections } from "/imports/api/collections/projects";
+import androidPublish, { testFunc2 } from "/imports/api/scripts/android";
+
+const buildTasks = () => {
+  const runningTask = TasksCollections.findOne({ status: "running" });
+  if (isEmpty(runningTask)) {
+    const nextTask = TasksCollections.findOne(
+      { status: "pending" },
+      {
+        sort: {
+          createdAt: 1,
+        },
+      }
+    );
+    if (isEmpty(nextTask)) {
+      return;
+    } else {
+      // testFunc2(nextTask._id);
+      androidPublish(nextTask._id, nextTask.config);
+    }
+  } else {
+    return;
+  }
+};
 
 Meteor.startup(() => {
   Roles.createRole("admin", { unlessExists: true });
@@ -20,4 +45,6 @@ Meteor.startup(() => {
       Roles.addUsersToRoles(adminId, "admin");
     }
   }
+
+  Meteor.setInterval(buildTasks, 5000);
 });
