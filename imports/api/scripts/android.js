@@ -5,11 +5,9 @@ const fse = require("fs-extra");
 import { rename } from "fs/promises";
 import { TasksCollections } from "../collections/projects";
 import { ErrorLogCollection } from "../collections/errorlog";
+import { packageCollection } from "../collections/file";
 import xml2js from "xml2js";
-const storage_path = "/Users/xiaoyongsufl/Desktop/storage/";
-const builder_path =
-  "/Users/xiaoyongsufl/Desktop/storage/hiper-matic-app-builder/";
-const package_path = "/Users/xiaoyongsufl/Desktop/storage/packages/";
+import { builder_path, storage_path } from "/imports/paths.js";
 const buildFunction = (_id) => {
   const script_www = spawn("node", ["./scripts/www.js"], { cwd: builder_path });
   script_www.on(
@@ -74,11 +72,42 @@ const buildFunction = (_id) => {
                 });
                 throw new Meteor.Error("script_android_package_err");
               }
-              TasksCollections.update(_id, {
-                $set: {
-                  status: "completed",
-                },
-              });
+              try {
+                fse.copySync(
+                  path.join(builder_path, "archives", "Hiper Matic.apk"),
+                  path.join(storage_path, "package", `${_id}.apk`)
+                );
+              } catch (err) {
+                TasksCollections.update(_id, {
+                  $set: {
+                    status: "failed",
+                  },
+                });
+                throw new Meteor.Error("remove apk error");
+              }
+              packageCollection.addFile(
+                path.join(storage_path, "package", `${_id}.apk`),
+                {},
+                (err, fileRef) => {
+                  if (err) {
+                    TasksCollections.update(_id, {
+                      $set: {
+                        status: "failed",
+                      },
+                    });
+                    throw new Meteor.Error("add package collection fail");
+                  }
+                  TasksCollections.update(_id, {
+                    $set: {
+                      status: "completed",
+                      output: {
+                        _id: fileRef._id,
+                        path: fileRef.path,
+                      },
+                    },
+                  });
+                }
+              );
             })
           );
         })
@@ -241,54 +270,3 @@ const publish = async (_id, config) => {
 };
 
 export default publish;
-
-export const testFunc2 = (_id) => {
-  TasksCollections.update(_id, {
-    $set: {
-      status: "running",
-    },
-  });
-  try {
-    const script_android_package = spawn("./scripts/android-package.sh", [], {
-      cwd: builder_path,
-    });
-    script_android_package.stdout.on("data", (data) => {
-      console.log(data.toString("ascii"));
-    });
-    script_android_package.stderr.on("data", (data) => {
-      console.log(data.toString("ascii"));
-    });
-    script_android_package.on(
-      "error",
-      Meteor.bindEnvironment((error) => {
-        console.log("catched----log");
-        console.log(error);
-      })
-    );
-    script_android_package.on(
-      "close",
-      Meteor.bindEnvironment((code) => {
-        if (code) {
-          console.log("script_android_package_err");
-          ErrorLogCollection.insert({
-            taskId: _id,
-            message: "script_android_package_err",
-          });
-          TasksCollections.update(_id, {
-            $set: {
-              status: "failed",
-            },
-          });
-          throw new Meteor.Error("script_android_package_err");
-        }
-        TasksCollections.update(_id, {
-          $set: {
-            status: "completed",
-          },
-        });
-      })
-    );
-  } catch (err) {
-    console.log("error catched");
-  }
-};

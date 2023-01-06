@@ -4,7 +4,6 @@ import { isEmpty } from "lodash";
 const ProjectsTable = ({ user, projectsList = [] }) => {
   const navigate = useNavigate();
   const handleNavigate = (item) => (e) => {
-    console.log(item);
     navigate(`/projects/detail/${item._id}`);
   };
   return (

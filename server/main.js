@@ -8,7 +8,7 @@ const SEED_USERNAME = "admin";
 const SEED_PASSWORD = "admin123123";
 import { isEmpty } from "lodash";
 import { TasksCollections } from "/imports/api/collections/projects";
-import androidPublish, { testFunc2 } from "/imports/api/scripts/android";
+import androidPublish from "/imports/api/scripts/android";
 
 const buildTasks = () => {
   const runningTask = TasksCollections.findOne({ status: "running" });
@@ -24,7 +24,6 @@ const buildTasks = () => {
     if (isEmpty(nextTask)) {
       return;
     } else {
-      // testFunc2(nextTask._id);
       androidPublish(nextTask._id, nextTask.config);
     }
   } else {

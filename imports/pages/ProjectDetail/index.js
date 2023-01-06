@@ -114,6 +114,16 @@ const index = ({ props }) => {
       status: { $in: ["running", "pending"] },
     })
   );
+  const completedTasks = useTracker(() =>
+    TasksCollections.find(
+      {
+        project_id: projectId,
+        status: "completed",
+      },
+      { sort: { createdAt: -1 } }
+    ).fetch()
+  );
+
   return (
     <div className="flex flex-col">
       <div>
@@ -222,7 +232,7 @@ const index = ({ props }) => {
         </div>
       </div>
       <div className="divider"></div>
-      <ApplicationTable></ApplicationTable>
+      <ApplicationTable completedTasks={completedTasks}></ApplicationTable>
     </div>
   );
 };

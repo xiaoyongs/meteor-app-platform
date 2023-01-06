@@ -1,24 +1,7 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 
-const ProjectVersionSchema = new SimpleSchema({
-  version: String,
-  platform: String,
-  project_name: String,
-  app_name: String,
-  signature: Object,
-  license: Object,
-  url: String,
-  download_times: Number,
-  size: String,
-  QRcode: String,
-  createdAt: String,
-});
-
-export const VersionsCollection = new Mongo.Collection("versions");
-VersionsCollection.attachSchema(ProjectVersionSchema);
-
-const imageSchema = new SimpleSchema(
+const fileSchema = new SimpleSchema(
   {
     _id: String,
     path: String,
@@ -38,8 +21,8 @@ const ProjectsSchema = new SimpleSchema(
     "members.$": { type: Object },
     "members.$._id": { type: String },
     "members.$.username": { type: String },
-    splash: { type: imageSchema },
-    icon: { type: imageSchema },
+    splash: { type: fileSchema },
+    icon: { type: fileSchema },
     boundleId: String,
     createdAt: String,
   },
@@ -49,13 +32,17 @@ const ProjectsSchema = new SimpleSchema(
 export const ProjectsCollection = new Mongo.Collection("projects");
 ProjectsCollection.attachSchema(ProjectsSchema);
 
-const TasksSchema = new SimpleSchema({
-  platform: String,
-  project_id: String,
-  project_name: String,
-  createdAt: String,
-  config: SimpleSchema.Any,
-  status: String,
-});
+const TasksSchema = new SimpleSchema(
+  {
+    platform: String,
+    project_id: String,
+    project_name: String,
+    createdAt: String,
+    config: SimpleSchema.Any,
+    status: String,
+    output: fileSchema,
+  },
+  { requiredByDefault: false }
+);
 export const TasksCollections = new Mongo.Collection("tasks");
 TasksCollections.attachSchema(TasksSchema);

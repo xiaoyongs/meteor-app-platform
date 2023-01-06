@@ -6,6 +6,7 @@ import RootComponent from "./Root/index";
 import routers from "/imports/router.js";
 import { Roles } from "meteor/alanning:roles";
 import { isEmpty } from "lodash";
+import Download from "/imports/pages/Download";
 export const App = () => {
   const user = useTracker(() => Meteor.user());
   const showManage = Roles.userIsInRole(user?._id, ["admin", "manager"]);
@@ -39,6 +40,7 @@ export const App = () => {
           })}
           <Route path=":anything" element={<></>} />
         </Route>
+        <Route path="/download/:fileId" element={<Download />} />
       </Routes>
     </BrowserRouter>
   );

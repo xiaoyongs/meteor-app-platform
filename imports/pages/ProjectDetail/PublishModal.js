@@ -34,6 +34,7 @@ const PublishModal = ({ modalInputRef, projectId, currentProject }) => {
         ...currentProject,
       },
     });
+    modalInputRef.current.checked = false;
   };
   return (
     <div className="modal">
