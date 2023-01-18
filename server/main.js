@@ -4,6 +4,7 @@ import { Roles } from "meteor/alanning:roles";
 import "/imports/api/users.js";
 import "/imports/api/projects.js";
 import "/imports/api/file.js";
+
 const SEED_USERNAME = "admin";
 const SEED_PASSWORD = "admin123123";
 import { isEmpty } from "lodash";
@@ -30,7 +31,6 @@ const buildTasks = () => {
     return;
   }
 };
-
 Meteor.startup(() => {
   Roles.createRole("admin", { unlessExists: true });
   Roles.createRole("manager", { unlessExists: true });

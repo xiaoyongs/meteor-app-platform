@@ -7,7 +7,8 @@ import { TasksCollections } from "../collections/projects";
 import { ErrorLogCollection } from "../collections/errorlog";
 import { packageCollection } from "../collections/file";
 import xml2js from "xml2js";
-import { builder_path, storage_path } from "/imports/paths.js";
+const builder_path = Meteor.settings.public.builder_path;
+const storage_path = Meteor.settings.public.storage_path;
 const buildFunction = (_id) => {
   const script_www = spawn("node", ["./scripts/www.js"], { cwd: builder_path });
   script_www.on(

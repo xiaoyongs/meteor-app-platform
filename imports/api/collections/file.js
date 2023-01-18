@@ -1,5 +1,6 @@
 import { FilesCollection } from "meteor/ostrio:files";
-import { storage_path } from "/imports/paths.js";
+const storage_path = Meteor.settings.public.storage_path;
+
 import path from "path";
 export const splashCollection = new FilesCollection({
   collectionName: "splash",
